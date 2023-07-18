@@ -6,7 +6,7 @@ import numpy as np
 
 cap = cv2.VideoCapture(0)
 
-detector = HandDetector(detectionCon=0.8)
+detector = HandDetector(detectionCon=0.8, maxHands=1)
 color = 255,0,0
 
 canvas_image = np.zeros((480, 640, 3), np.uint8)
@@ -21,8 +21,11 @@ brush_size = 7
 eraser_size = 7
 while True:
     success, image = cap.read()
-    image = detector.findHands(image, False)
-    lmList, _  = detector.findPosition(image, draw=False)
+    hands = detector.findHands(image, draw=False)
+    if hands != []:
+        lmList = hands[0]['lmList']
+    else:
+        lmList = hands
     
     if mode == 'painting':
         cv2.rectangle(image, (50,50), (150,150), (255,0,0), -1)
@@ -48,28 +51,30 @@ while True:
         cv2.circle(image, (x_eraser,300), 10, (200,200,200), -1)
 
         if lmList:
-            l, _, _ = detector.findDistance(4, 8, image, draw=False)
-            if l < 30:
+            cv2.circle(image, lmList[8][:-1], 10, (50,50,50))
+            cv2.circle(image, lmList[12][:-1], 10, (50,50,50))
+            l, _ = detector.findDistance(lmList[8][:-1], lmList[12][:-1])
+            if l < 40:
                 cursor = lmList[8]
-                w, h = 10, 10   
+                w, h = 40, 40   
                 if x_brush-w<cursor[0]<x_brush+w and y_brush-h<cursor[1]<y_brush+h:
-                    x_brush, y_brush = lmList[8]
+                    x_brush, y_brush = lmList[8][:-1]
                 if x_eraser-w<cursor[0]<x_eraser+w and y_eraser-h<cursor[1]<y_eraser+h:
-                    x_eraser, y_eraser = lmList[8]
+                    x_eraser, y_eraser = lmList[8][:-1]
         
         cx2, cy2 = 0, 0
     
     if lmList:
-        l, _, _ = detector.findDistance(8, 12, image, draw=False)
-        fingers = detector.fingersUp()
+        l, _ = detector.findDistance(lmList[8][:-1], lmList[12][:-1])
+        fingers = detector.fingersUp(hands[0])
         
         if mode == 'painting':
-            cx, cy = lmList[8]
+            cx, cy = lmList[8][:-1]
             if cx2 == 0 and cy2 == 0:
                 cx2, cy2 = cx, cy
             cv2.circle(image, (cx,cy), 7, color, -1)
-            fingersup = detector.fingersUp()
-            if l<30 and fingersup[1] == 1 and fingersup[2] == 1:
+            fingersup = detector.fingersUp(hands[0])
+            if l<35 and fingersup[1] == 1 and fingersup [2] == 1:
                 if 50<cy<150:
                     cx2, cy2 = cx, cy
                     if 50<cx<150: color = 255,0,0                    
@@ -91,7 +96,7 @@ while True:
             image = cv2.bitwise_and(image, imageInv) 
             image = cv2.bitwise_or(image, canvas_image)
 
-        if fingers[0] and fingers[1] and fingers[-1] and not fingers[2] and not fingers[3]:
+        if not fingers[0] and fingers[1] and fingers[-1] and fingers[2] and not fingers[3]:
             mode = 'painting'
 
         elif fingers[1] and fingers[-1] and not fingers[0] and not fingers[2] and not fingers[3]:
@@ -105,5 +110,4 @@ while True:
      
 
     cv2.imshow('main', image)
-    # cv2.imshow('canvas image', canvas_image)
     cv2.waitKey(1)
