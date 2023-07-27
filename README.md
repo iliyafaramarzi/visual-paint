@@ -1,8 +1,8 @@
 # visual-paint
-with this program you can paint with you finger and also you can change paint color and earse
+Visual paint is a program that you can do painting with you hand gestures and some more features like change color, change brush size, erase lines and change eraser size.<br />
+I'm working on this to add a lot of more features and make it better.
 
-# 0.1 Version:
-you can draw with 3 color and you can use earser
-
-# 0.2 Version:
-added setting panel. you can change brush and eraser size with you hand gesture
+## Contact me
+Telegram: [@iliyafaramarzi](https://t.me/iliyaFaramarzi)<br />
+Instagram: [faramarziiliya](https://www.instagram.com/faramarziiliya/)<br />
+Linkedin: [iliyafaramarzi](https://www.linkedin.com/in/iliya-faramarzi-13109a21a/)
