@@ -2,6 +2,7 @@ import cv2
 from cvzone.HandTrackingModule import HandDetector
 import cvzone
 import numpy as np
+import datetime
 
 
 cap = cv2.VideoCapture(0)
@@ -129,4 +130,8 @@ while True:
 
 
     cv2.imshow('main', image)
-    cv2.waitKey(1)
+    if cv2.waitKey(1) == ord('s'):
+        try:
+            cv2.imwrite(f'Saved_files/{datetime.datetime.now().strftime("%Y %m %d %H %M %S")}.png', cv2.bitwise_or(canvas_image, imageInv))
+        except:
+            print('Please draw something first!')
