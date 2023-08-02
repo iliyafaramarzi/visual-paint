@@ -115,12 +115,6 @@ while True:
 
             cx2, cy2 = cx, cy
 
-            gray_image = cv2.cvtColor(canvas_image, cv2.COLOR_RGB2GRAY)
-            _, imageInv = cv2.threshold(gray_image, 20, 255, cv2.THRESH_BINARY_INV)
-            imageInv = cv2.cvtColor(imageInv, cv2.COLOR_GRAY2BGR)
-            image = cv2.bitwise_and(image, imageInv) 
-            image = cv2.bitwise_or(image, canvas_image)
-
         if not fingers[0] and fingers[1] and fingers[-1] and fingers[2] and not fingers[3]:
             mode = 'painting'
 
@@ -128,8 +122,13 @@ while True:
             mode = 'setting'
     
 
-
+    gray_image = cv2.cvtColor(canvas_image, cv2.COLOR_RGB2GRAY)
+    _, imageInv = cv2.threshold(gray_image, 20, 255, cv2.THRESH_BINARY_INV)
+    imageInv = cv2.cvtColor(imageInv, cv2.COLOR_GRAY2BGR)
+    image = cv2.bitwise_and(image, imageInv) 
+    image = cv2.bitwise_or(image, canvas_image)
     cv2.imshow('main', image)
+    
     if cv2.waitKey(1) == ord('s'):
         try:
             cv2.imwrite(f'Saved_files/{datetime.datetime.now().strftime("%Y %m %d %H %M %S")}.png', cv2.bitwise_or(canvas_image, imageInv))
