@@ -8,13 +8,17 @@ import datetime
 cap = cv2.VideoCapture(0)
 
 detector = HandDetector(detectionCon=0.8, maxHands=1)
-color = 255,0,0
+color = (255,0,0)
 
 canvas_image = np.zeros((480, 640, 3), np.uint8)
 
 cx2, cy2 = 0, 0
 
 mode = 'painting'
+colors = []
+with open('colors.txt') as file:
+    for i in file.readlines():
+        colors.append(tuple(map(int, i.replace('\n', '').split(', '))))
 
 x_brush, y_brush = 60, 100
 x_eraser, y_eraser = 60, 300
@@ -30,29 +34,13 @@ while True:
         lmList = hands
     
     if mode == 'painting':
-        Blue = cv2.imread('Pictures/Blue.png', cv2.IMREAD_COLOR)
-        image[20:100, 20:100] = 0
-        image[20:100, 20:100] += Blue
 
-        Green = cv2.imread('Pictures/Green.png', cv2.IMREAD_COLOR)
-        image[20:100, 120:200] = 0
-        image[20:100, 120:200] += Green
-
-        Yellow = cv2.imread('Pictures/Yellow.png', cv2.IMREAD_COLOR)
-        image[20:100, 220:300] = 0
-        image[20:100, 220:300] += Yellow
-
-        Red = cv2.imread('Pictures/Red.png', cv2.IMREAD_COLOR)
-        image[20:100, 320:400] = 0
-        image[20:100, 320:400] += Red
-        
-        White = cv2.imread('Pictures/White.png', cv2.IMREAD_COLOR)
-        image[20:100, 420:500] = 0
-        image[20:100, 420:500] += White
-
-        eraser = cv2.imread('Pictures/eraser.jpg', cv2.IMREAD_COLOR)
-        image[20:100, 520:600] = 0
-        image[20:100, 520:600] += eraser
+        cv2.rectangle(image, (20, 20), (100, 100), colors[0], -1)
+        cv2.rectangle(image, (120, 20), (200, 100), colors[1], -1)
+        cv2.rectangle(image, (220, 20), (300, 100), colors[2], -1)
+        cv2.rectangle(image, (320, 20), (400, 100), colors[3], -1)
+        cv2.rectangle(image, (420, 20), (500, 100), colors[4], -1)
+        cv2.rectangle(image, (520, 20), (600, 100), colors[5], -1) #if you want to use eraser you should put 0,0,0 in "colors.txt" file
 
     else:
         cv2.rectangle(image, (50,100), (600, 104), (100,100,100), -1)
@@ -100,12 +88,12 @@ while True:
                     cx2, cy2 = cx, cy
 
                     # RGB BGR 
-                    if 20<cx<100: color = (255, 0, 0) #blue 
-                    elif 120<cx<200: color = (0, 255, 0) #green 
-                    elif 220<cx<300: color = (0, 255, 255) #yellow 255 255 0, 255     
-                    elif 320<cx<400: color = (0, 0, 255) # red
-                    elif 420<cx<500: color = (255,255,255) # white
-                    elif 520<cx<600: color = (0,0,0) #eraser
+                    if 20<cx<100: color = colors[0] 
+                    elif 120<cx<200: color = colors[1] 
+                    elif 220<cx<300: color = colors[2]      
+                    elif 320<cx<400: color = colors[3] 
+                    elif 420<cx<500: color = colors[4] 
+                    elif 520<cx<600: color = colors[5] 
 
             else:
                 if color == (0,0,0):
